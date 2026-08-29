@@ -111,6 +111,23 @@ async function montar() {
     emissiveIntensity: 0.3,
   });
 
+  // Contorno branco. A página é escura e a marca é roxa escura — sem uma linha
+  // clara desenhando a silhueta, ela some no fundo, principalmente na metade do
+  // giro em que nenhuma luz bate de frente. É a mesma solução da tela de login
+  // do app (login3d-mobile.js), que também põe LineSegments em cima de cada
+  // cubo pelo mesmo motivo.
+  //
+  // AdditiveBlending faz a linha SOMAR luz ao que está atrás em vez de cobrir:
+  // por cima do roxo ela clareia, no vazio ela brilha sozinha. É o que dá o ar
+  // de neon em vez de traço de caneta.
+  const materialContorno = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
   for (const pontos of contornos) {
     const forma = new THREE.Shape(pontos.map((p) => new THREE.Vector2(p.x, p.y)));
     const geometria = new THREE.ExtrudeGeometry(forma, {
@@ -124,7 +141,18 @@ async function montar() {
     // Centra a espessura no eixo Z pra peça girar em torno de si mesma, e não
     // em torno da face de trás (que faria ela "orbitar" em vez de girar).
     geometria.translate(0, 0, -23);
-    grupo.add(new THREE.Mesh(geometria, material));
+
+    const malha = new THREE.Mesh(geometria, material);
+
+    // O ângulo de 32° é o que separa "quina de verdade" de "curva lisa". O
+    // contorno vem de 220 pontos amostrados do SVG, então as laterais são uma
+    // sequência de faces quase coplanares — com o padrão (1°) o three.js
+    // desenharia uma linha entre CADA uma delas e a marca viraria uma bola de
+    // arame. Com 32° só sobram as arestas que o olho lê como borda: onde a face
+    // da frente encontra o bisel, e o mesmo atrás.
+    malha.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometria, 32), materialContorno));
+
+    grupo.add(malha);
   }
 
   // A marca ocupa só um pedaço do viewBox (que é uma folha A4 de pé). Em vez de
