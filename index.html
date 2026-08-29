@@ -54,6 +54,19 @@
   <div class="hero-grade">
 
     <div class="hero-txt">
+      <!-- Logo 3D. É o ícone do app montado como um objeto com espessura de
+           verdade (frente, verso e um miolo entre os dois), girando no eixo Y.
+           aria-hidden porque é enfeite: quem usa leitor de tela já recebe a
+           marca no <img> do topo, e ouvir "Micro Sistemas" duas vezes seguidas
+           não ajuda ninguém. -->
+      <div class="logo3d" aria-hidden="true">
+        <div class="logo3d-caixa">
+          <img class="logo3d-face logo3d-frente" src="img/icone-app.png" alt="" width="180" height="180" fetchpriority="high">
+          <img class="logo3d-face logo3d-verso"  src="img/icone-app.png" alt="" width="180" height="180">
+          <span class="logo3d-miolo"></span>
+        </div>
+        <span class="logo3d-sombra"></span>
+      </div>
       <p class="pill"><span class="pill-ponto"></span><span class="pill-txt">v1.9.6 · Windows e Android</span></p>
       <h1>Seus sistemas<br><em>num só lugar.</em></h1>
       <p class="hero-sub">

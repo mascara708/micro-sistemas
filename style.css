@@ -107,6 +107,14 @@ p  { margin: 0; }
 }
 .btn--principal {
   background: linear-gradient(135deg, var(--roxo-escuro), #6B2FD1 55%, var(--roxo-claro));
+  /* .btn tem "border: 1px solid transparent" (pra todas as variantes terem o
+     mesmo tamanho). Sem esta linha, o gradiente é DIMENSIONADO pela caixa
+     interna (background-origin padrão = padding-box) mas PINTADO até a borda
+     (background-clip padrão = border-box) — e a faixa de 1px que sobra repete
+     o último stop, que aqui é o roxo claro. Resultado: um contorno roxo claro
+     de 1px em volta do botão, que parecia bug de renderização. Alinhando a
+     origem ao clip, o gradiente cobre a borda inteira e a linha some. */
+  background-origin: border-box;
   color: #fff;
   box-shadow: 0 12px 30px -12px rgba(105, 47, 209, .95);
 }
@@ -392,8 +400,16 @@ h1 em {
 }
 .dest-preco { margin: 22px 0 18px; font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; }
 .dest-preco span { font-size: .84rem; font-weight: 600; color: var(--cinza-neutro); letter-spacing: 0; }
+/* O "height: auto" NÃO é decorativo. O <img> sai do gerador com os atributos
+   width="1280" height="800", e o navegador trata esses atributos como estilo.
+   Com "width: 100%" e nenhuma altura em CSS, sobrava a altura do atributo:
+   a imagem era esticada pra 800px de altura numa largura de ~600px — 53% de
+   distorção, as telas dos sistemas achatadas. O "auto" devolve a proporção
+   original. (Os atributos continuam valendo pra reservar o espaço antes da
+   imagem carregar, que é pra que servem.) */
 .dest-img img {
-  width: 100%; border-radius: var(--raio); border: 1px solid var(--borda-viva);
+  width: 100%; height: auto;
+  border-radius: var(--raio); border: 1px solid var(--borda-viva);
   box-shadow: var(--sombra);
 }
 
@@ -641,4 +657,86 @@ h1 em {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   .e-surge { opacity: 1; transform: none; }
   .janela { transform: none; }
+}
+
+/* ═══ Logo 3D do hero ═══════════════════════════════════════════════════════
+   Um objeto com espessura girando no eixo Y — não uma imagem com "rotação"
+   plana, que de perfil sumiria numa linha e entregaria o truque.
+
+   A espessura vem de três peças: a face da frente, a de trás (espelhada, pra
+   não aparecer o ícone invertido) e o .logo3d-miolo, um bloco fino entre as
+   duas que só é visto de raspão, quando o giro passa pelos 90°. É o que faz
+   parecer uma peça sólida em vez de uma folha de papel.
+
+   NÃO usa three.js de propósito: a biblioteca custa ~670 KB (o app do celular
+   carrega ela, o site não) e aqui o resultado seria o mesmo. Isto é GPU pura,
+   sem um byte de JavaScript.
+
+   Duas animações encadeadas por delay na mesma propriedade: "entra" roda uma
+   vez, e "gira" assume quando o delay dela vence (a última animação declarada
+   ganha enquanto está ativa). O efeito é aparecer girando e continuar girando. */
+.logo3d {
+  position: relative;
+  width: clamp(76px, 9vw, 108px);
+  aspect-ratio: 1;
+  margin-bottom: 22px;
+  perspective: 900px;
+}
+.logo3d-caixa {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  animation:
+    logo3d-entra 1400ms cubic-bezier(.16, 1, .3, 1) both,
+    logo3d-gira 19s linear 1400ms infinite;
+}
+.logo3d-face {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border-radius: 24%;
+  backface-visibility: hidden;
+  box-shadow: 0 18px 40px -18px rgba(105, 47, 209, .9);
+}
+.logo3d-frente { transform: translateZ(7px); }
+/* rotateY(180deg) põe o verso virado pra fora; sem isso o ícone apareceria
+   espelhado na metade da volta. */
+.logo3d-verso { transform: rotateY(180deg) translateZ(7px); }
+.logo3d-miolo {
+  position: absolute; inset: 6% 0;
+  border-radius: 24%;
+  background: linear-gradient(90deg, #2A1259, #6B2FD1 50%, #2A1259);
+  transform: translateZ(0);
+}
+/* Sombra no chão: encolhe quando a peça fica de perfil, que é quando ela
+   projeta menos. Sincronizada com o giro pela mesma duração e delay. */
+.logo3d-sombra {
+  position: absolute; left: 12%; right: 12%; bottom: -14px; height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(50% 50%, rgba(105, 47, 209, .55), transparent 70%);
+  filter: blur(6px);
+  animation: logo3d-sombra 19s linear 1400ms infinite;
+}
+
+@keyframes logo3d-entra {
+  from { opacity: 0; transform: rotateY(-540deg) scale(.35); }
+  to   { opacity: 1; transform: rotateY(0deg) scale(1); }
+}
+@keyframes logo3d-gira {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+@keyframes logo3d-sombra {
+  0%, 50%, 100% { transform: scaleX(1);   opacity: .55; }
+  25%, 75%      { transform: scaleX(.45); opacity: .25; }
+}
+
+/* Passar o mouse acelera — dá a sensação de que dá pra "pegar" a peça. */
+@media (hover: hover) {
+  .logo3d:hover .logo3d-caixa { animation-duration: 1400ms, 3.2s; }
+}
+
+/* Quem pediu menos movimento vê a peça parada, de frente, sem entrada nenhuma.
+   Mesma regra do .e-surge lá em cima. */
+@media (prefers-reduced-motion: reduce) {
+  .logo3d-caixa, .logo3d-sombra { animation: none; }
+  .logo3d-caixa { transform: none; }
 }
