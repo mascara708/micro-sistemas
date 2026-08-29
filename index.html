@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preload" href="fonte/manrope-variable.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=1.9.6">
 </head>
 <body data-versao="1.9.6">
 
@@ -54,18 +54,17 @@
   <div class="hero-grade">
 
     <div class="hero-txt">
-      <!-- Logo 3D. É o ícone do app montado como um objeto com espessura de
-           verdade (frente, verso e um miolo entre os dois), girando no eixo Y.
-           aria-hidden porque é enfeite: quem usa leitor de tela já recebe a
-           marca no <img> do topo, e ouvir "Micro Sistemas" duas vezes seguidas
-           não ajuda ninguém. -->
-      <div class="logo3d" aria-hidden="true">
-        <div class="logo3d-caixa">
-          <img class="logo3d-face logo3d-frente" src="img/icone-app.png" alt="" width="180" height="180" fetchpriority="high">
-          <img class="logo3d-face logo3d-verso"  src="img/icone-app.png" alt="" width="180" height="180">
-          <span class="logo3d-miolo"></span>
-        </div>
-        <span class="logo3d-sombra"></span>
+      <!-- Marca em 3D de verdade: os contornos de img/logo-marca.svg viram um
+           sólido extrudado no logo3d.js (three.js), do mesmo jeito que a tela
+           de login do app. O <img> aqui dentro é a RESERVA — é ele que aparece
+           enquanto o 3D não carrega, e é ele que fica pra sempre em quem pediu
+           menos movimento ou não tem WebGL. O logo3d.js só o esconde quando a
+           cena está montada e girando (classe .logo3d--pronto).
+
+           aria-hidden porque é enfeite: a marca já é anunciada pelo <img> do
+           topo, e ouvir "Micro Sistemas" duas vezes seguidas não ajuda. -->
+      <div class="logo3d" id="logo3d" aria-hidden="true">
+        <img class="logo3d-reserva" src="img/icone-app.png" alt="" width="180" height="180">
       </div>
       <p class="pill"><span class="pill-ponto"></span><span class="pill-txt">v1.9.6 · Windows e Android</span></p>
       <h1>Seus sistemas<br><em>num só lugar.</em></h1>
@@ -924,6 +923,10 @@
   </div>
 </footer>
 
-<script src="app.js" defer></script>
+<script src="app.js?v=1.9.6" defer></script>
+<!-- type="module" porque o logo3d.js faz import() do three.js. Ele já decide
+     sozinho se vale carregar (ver o fim do arquivo): sem WebGL, com "reduzir
+     animações" ligado, ou sem o elemento na página, não busca nada. -->
+<script src="logo3d.js?v=1.9.6" type="module"></script>
 </body>
 </html>
