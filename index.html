@@ -19,10 +19,114 @@
 <meta property="og:image" content="https://mascara708.github.io/micro-sistemas/img/previa.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tela do Micro Sistemas com o painel de sorteio ao vivo aberto">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preload" href="fonte/manrope-variable.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="style.css?v=1.9.6">
+
+<!-- Dados estruturados. Preço vem do catalogo.js/packs.json e as perguntas são
+     lidas da própria seção "Perguntas" abaixo — editar o texto de um <details>
+     atualiza o que o Google mostra na busca. Não escreva nada aqui dentro. -->
+<!-- GERADO:dados -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Micro Sistemas",
+      "description": "Um programa só com sorteio ao vivo, bingo, caixa de evento, controle financeiro e mais. Instala uma vez, entra uma vez, e abre o que precisar.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Windows, Android",
+      "softwareVersion": "1.9.6",
+      "url": "https://mascara708.github.io/micro-sistemas/",
+      "downloadUrl": "https://github.com/mascara708/MicroSistemas-Releases/releases/download/latest/Micro-Sistemas-Setup.exe",
+      "installUrl": "https://mascara708.github.io/micro-sistemas/",
+      "screenshot": "https://mascara708.github.io/micro-sistemas/img/previa.jpg",
+      "inLanguage": "pt-BR",
+      "author": {
+        "@type": "Person",
+        "name": "Nicolas Aroucha"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Micro Sistemas"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "BRL",
+        "lowPrice": "0",
+        "highPrice": "697.90",
+        "offerCount": 15,
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Preciso de internet pra usar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No dia a dia, não. A internet entra em quatro momentos: quando você cria a conta, na primeira vez que ativa uma chave neste computador, quando o programa verifica se saiu versão nova e quando você manda uma mensagem pro suporte. Sortear, gerar cartela, lançar despesa e fechar o caixa funcionam offline."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Funciona no Mac ou no Linux?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Hoje não. O instalador é de Windows, e existe o app de Android. Mac e Linux não têm versão."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como recebo minha chave depois de pagar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Se comprou pela Loja de dentro do programa, ele libera sozinho assim que o pagamento é confirmado — você não precisa colar nada. Se comprou por fora ou a confirmação demorar, a chave chega pelo WhatsApp e você cola em Licenças → Ativar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "E se eu formatar o computador?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sua conta tem um número no formato MS-XXXX-XXXX, que fica no seu perfil. É por ele que eu identifico qual chave era sua e devolvo o acesso — mesmo que você tenha perdido o e-mail. Vale a pena anotar ele em algum lugar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A licença é mensal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. É anual, paga uma vez, e todas as atualizações que saírem dentro desse ano estão incluídas. Não tem cobrança recorrente no cartão."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso usar em mais de um computador?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cada chave trava no primeiro computador em que for ativada. Pra usar num segundo, é outra chave — ou me chama no WhatsApp que a gente resolve, principalmente se for troca de máquina."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tem garantia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "7 dias. Se não servir pra você, devolvo o valor. E antes de comprar dá pra testar 15 minutos de graça, o que costuma ser suficiente pra saber."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<!-- /GERADO:dados -->
 </head>
 <body data-versao="1.9.6">
 
@@ -51,20 +155,28 @@
 <!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-brilho" aria-hidden="true"></div>
+  <!-- Enfeite, os três. Vêm antes do .hero-grade porque ele é position:relative
+       e por isso pinta por cima destes — texto e botão nunca ficam atrás da luz. -->
+  <div class="hero-aurora" aria-hidden="true"></div>
+  <div class="hero-lanterna" aria-hidden="true"></div>
   <div class="hero-grade">
 
     <div class="hero-txt">
       <!-- Marca em 3D de verdade: os contornos de img/logo-marca.svg viram um
            sólido extrudado no logo3d.js (three.js), do mesmo jeito que a tela
-           de login do app. O <img> aqui dentro é a RESERVA — é ele que aparece
-           enquanto o 3D não carrega, e é ele que fica pra sempre em quem pediu
-           menos movimento ou não tem WebGL. O logo3d.js só o esconde quando a
-           cena está montada e girando (classe .logo3d--pronto).
+           de login do app.
+
+           O <img> aqui dentro é a RESERVA, e ela fica ESCONDIDA por padrão. Só
+           aparece quando o logo3d.js desiste do 3D e marca .logo3d--sem3d:
+           aparelho sem WebGL, quem pediu menos movimento, ou falha ao montar a
+           cena. Antes ela aparecia desde o começo e era escondida quando a cena
+           ficava pronta — o que significava um piscar de marca em TODA visita,
+           porque os 670 KB do three.js não chegam instantaneamente.
 
            aria-hidden porque é enfeite: a marca já é anunciada pelo <img> do
            topo, e ouvir "Micro Sistemas" duas vezes seguidas não ajuda. -->
       <div class="logo3d" id="logo3d" aria-hidden="true">
-        <img class="logo3d-reserva" src="img/icone-app.png" alt="" width="180" height="180">
+        <img class="logo3d-reserva" src="img/marca-reserva.webp" alt="" width="212" height="200">
       </div>
       <p class="pill"><span class="pill-ponto"></span><span class="pill-txt">v1.9.6 · Windows e Android</span></p>
       <h1>Seus sistemas<br><em>num só lugar.</em></h1>
@@ -94,7 +206,8 @@
         </div>
         <div class="janela-tela" id="carrossel">
 <!-- GERADO:hero -->
-      <figure class="slide e-ativo" data-slide="0">
+      <figure class="slide e-ativo" data-slide="0"
+               role="tabpanel" id="tela-0" aria-labelledby="tab-0">
         <img src="img/tela/Bora_Sortear_v4_7_0__inicial.webp"
              srcset="img/tela/Bora_Sortear_v4_7_0__inicial@640.webp 640w, img/tela/Bora_Sortear_v4_7_0__inicial.webp 1280w"
              sizes="(max-width: 900px) 92vw, 46vw"
@@ -102,7 +215,8 @@
              fetchpriority="high">
         <figcaption>Bora Sortear — painel do sorteio ao vivo</figcaption>
       </figure>
-      <figure class="slide" data-slide="1">
+      <figure class="slide" data-slide="1"
+               role="tabpanel" id="tela-1" aria-labelledby="tab-1" aria-hidden="true">
         <img src="img/tela/Fluxo_v3_0_0__dashboard.webp"
              srcset="img/tela/Fluxo_v3_0_0__dashboard@640.webp 640w, img/tela/Fluxo_v3_0_0__dashboard.webp 1280w"
              sizes="(max-width: 900px) 92vw, 46vw"
@@ -110,7 +224,8 @@
              loading="lazy">
         <figcaption>Fluxo — central financeira do mês</figcaption>
       </figure>
-      <figure class="slide" data-slide="2">
+      <figure class="slide" data-slide="2"
+               role="tabpanel" id="tela-2" aria-labelledby="tab-2" aria-hidden="true">
         <img src="img/tela/Sorteva_v1_0_6__sorteio.webp"
              srcset="img/tela/Sorteva_v1_0_6__sorteio@640.webp 640w, img/tela/Sorteva_v1_0_6__sorteio.webp 1280w"
              sizes="(max-width: 900px) 92vw, 46vw"
@@ -118,7 +233,8 @@
              loading="lazy">
         <figcaption>Sorteva — sorteio com telão e ranking</figcaption>
       </figure>
-      <figure class="slide" data-slide="3">
+      <figure class="slide" data-slide="3"
+               role="tabpanel" id="tela-3" aria-labelledby="tab-3" aria-hidden="true">
         <img src="img/tela/Sorteio_v1_2_0__bingo.webp"
              srcset="img/tela/Sorteio_v1_2_0__bingo@640.webp 640w, img/tela/Sorteio_v1_2_0__bingo.webp 1280w"
              sizes="(max-width: 900px) 92vw, 46vw"
@@ -126,7 +242,8 @@
              loading="lazy">
         <figcaption>Sorteio — bingo projetado ao vivo</figcaption>
       </figure>
-      <figure class="slide" data-slide="4">
+      <figure class="slide" data-slide="4"
+               role="tabpanel" id="tela-4" aria-labelledby="tab-4" aria-hidden="true">
         <img src="img/tela/Coreto_Desktop_v1_2_0__inicial.webp"
              srcset="img/tela/Coreto_Desktop_v1_2_0__inicial@640.webp 640w, img/tela/Coreto_Desktop_v1_2_0__inicial.webp 1280w"
              sizes="(max-width: 900px) 92vw, 46vw"
@@ -139,11 +256,26 @@
       </div>
       <div class="pontos" role="tablist" aria-label="Telas do programa">
 <!-- GERADO:pontos -->
-      <button class="ponto e-ativo" data-ir="0" aria-label="Ver Bora Sortear — painel do sorteio ao vivo"></button>
-      <button class="ponto" data-ir="1" aria-label="Ver Fluxo — central financeira do mês"></button>
-      <button class="ponto" data-ir="2" aria-label="Ver Sorteva — sorteio com telão e ranking"></button>
-      <button class="ponto" data-ir="3" aria-label="Ver Sorteio — bingo projetado ao vivo"></button>
-      <button class="ponto" data-ir="4" aria-label="Ver Coreto — gestor de eventos"></button>
+      <button class="ponto e-ativo" data-ir="0" type="button"
+              role="tab" id="tab-0" aria-controls="tela-0"
+              aria-selected="true" tabindex="0"
+              aria-label="Ver Bora Sortear — painel do sorteio ao vivo"></button>
+      <button class="ponto" data-ir="1" type="button"
+              role="tab" id="tab-1" aria-controls="tela-1"
+              aria-selected="false" tabindex="-1"
+              aria-label="Ver Fluxo — central financeira do mês"></button>
+      <button class="ponto" data-ir="2" type="button"
+              role="tab" id="tab-2" aria-controls="tela-2"
+              aria-selected="false" tabindex="-1"
+              aria-label="Ver Sorteva — sorteio com telão e ranking"></button>
+      <button class="ponto" data-ir="3" type="button"
+              role="tab" id="tab-3" aria-controls="tela-3"
+              aria-selected="false" tabindex="-1"
+              aria-label="Ver Sorteio — bingo projetado ao vivo"></button>
+      <button class="ponto" data-ir="4" type="button"
+              role="tab" id="tab-4" aria-controls="tela-4"
+              aria-selected="false" tabindex="-1"
+              aria-label="Ver Coreto — gestor de eventos"></button>
 <!-- /GERADO:pontos -->
       </div>
     </div>
@@ -155,7 +287,7 @@
 <section class="numeros">
   <div class="faixa numeros-grade">
 <!-- GERADO:numeros -->
-      <div class="numero"><strong>24</strong><span>sistemas no catálogo</span></div>
+      <div class="numero"><strong>23</strong><span>sistemas no catálogo</span></div>
       <div class="numero"><strong>18</strong><span>prontos pra usar hoje</span></div>
       <div class="numero"><strong>8</strong><span>liberados de graça, pra sempre</span></div>
       <div class="numero"><strong>15 min</strong><span>de teste grátis em qualquer um</span></div>
@@ -243,6 +375,17 @@
           <p class="sis-desc">Batalha de cartas em tempo real: invoque tropas, derrube as torres inimigas e leve a coroa.</p>
         </div>
         <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--gratis">Grátis</span>
+        </div>
+      </article>
+      <article class="sis" data-cat="sorteio eventos" data-gratis="0">
+        <img class="sis-icone" src="img/icone/Sorteio_v1_2_0.webp" alt="" width="52" height="52" loading="lazy">
+        <div class="sis-corpo">
+          <h3 class="sis-nome">Bingo <span class="sis-versao">v1.2.0</span></h3>
+          <p class="sis-plat">Windows</p>
+          <p class="sis-desc">Tela de sorteio otimizada para projeção ao vivo em telas grandes e TVs, com números sorteados exibidos em destaque visual, histórico dos últimos números chamados, contador de rodadas e interface limpa e legível à distância.</p>
+        </div>
+        <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--preco">R$ 237,90<small>/ano</small></span>
+        <a class="sis-comprar" href="https://pay.cakto.com.br/34auxis_977232" target="_blank" rel="noopener">Comprar</a>
         </div>
       </article>
       <article class="sis" data-cat="diversao eventos" data-gratis="1">
@@ -341,17 +484,6 @@
         <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--gratis">Grátis</span>
         </div>
       </article>
-      <article class="sis" data-cat="sorteio eventos" data-gratis="0">
-        <img class="sis-icone" src="img/icone/GiraSorte_v1_0_5.webp" alt="" width="52" height="52" loading="lazy">
-        <div class="sis-corpo">
-          <h3 class="sis-nome">GiraSorte <span class="sis-versao">v1.0.5</span></h3>
-          <p class="sis-plat">Windows</p>
-          <p class="sis-desc">Roleta de sorteio visual e animada, projetada para criar momentos de tensão e diversão ao vivo, com suporte a múltiplos participantes, personalização de cores, sons e efeitos visuais, ideal para projeção em telas grandes.</p>
-        </div>
-        <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--preco">R$ 59,99<small>/ano</small></span>
-        <a class="sis-comprar" href="https://pay.cakto.com.br/yhb3de8_1058021" target="_blank" rel="noopener">Comprar</a>
-        </div>
-      </article>
       <article class="sis" data-cat="diversao" data-gratis="1">
         <img class="sis-icone" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234A1D96%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23A984E8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url(%23g)%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2243%22%20font-family%3D%22Manrope%2CSegoe%20UI%2Csans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22700%22%20fill%3D%22%23F7F5FB%22%20text-anchor%3D%22middle%22%3EJ%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="52" height="52" loading="lazy">
         <div class="sis-corpo">
@@ -383,6 +515,17 @@
         <a class="sis-comprar" href="https://pay.cakto.com.br/bv2z49w_979715" target="_blank" rel="noopener">Comprar</a>
         </div>
       </article>
+      <article class="sis" data-cat="sorteio eventos" data-gratis="0">
+        <img class="sis-icone" src="img/icone/GiraSorte_v1_0_5.webp" alt="" width="52" height="52" loading="lazy">
+        <div class="sis-corpo">
+          <h3 class="sis-nome">Roleta <span class="sis-versao">v1.0.5</span></h3>
+          <p class="sis-plat">Windows</p>
+          <p class="sis-desc">Roleta de sorteio visual e animada, projetada para criar momentos de tensão e diversão ao vivo, com suporte a múltiplos participantes, personalização de cores, sons e efeitos visuais, ideal para projeção em telas grandes.</p>
+        </div>
+        <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--preco">R$ 59,99<small>/ano</small></span>
+        <a class="sis-comprar" href="https://pay.cakto.com.br/yhb3de8_1058021" target="_blank" rel="noopener">Comprar</a>
+        </div>
+      </article>
       <article class="sis" data-cat="diversao" data-gratis="1">
         <img class="sis-icone" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234A1D96%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23A984E8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url(%23g)%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2243%22%20font-family%3D%22Manrope%2CSegoe%20UI%2Csans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22700%22%20fill%3D%22%23F7F5FB%22%20text-anchor%3D%22middle%22%3ES%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="52" height="52" loading="lazy">
         <div class="sis-corpo">
@@ -391,17 +534,6 @@
           <p class="sis-desc">Versão moderna e viciante do clássico jogo da cobrinha, desenvolvido exclusivamente para desktop, com controles responsivos, sistema de pontuação, recorde pessoal salvo automaticamente no navegador e gameplay fluido para pausas rápidas.</p>
         </div>
         <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--gratis">Grátis</span>
-        </div>
-      </article>
-      <article class="sis" data-cat="sorteio eventos" data-gratis="0">
-        <img class="sis-icone" src="img/icone/Sorteio_v1_2_0.webp" alt="" width="52" height="52" loading="lazy">
-        <div class="sis-corpo">
-          <h3 class="sis-nome">Sorteio <span class="sis-versao">v1.2.0</span></h3>
-          <p class="sis-plat">Windows</p>
-          <p class="sis-desc">Tela de sorteio otimizada para projeção ao vivo em telas grandes e TVs, com números sorteados exibidos em destaque visual, histórico dos últimos números chamados, contador de rodadas e interface limpa e legível à distância.</p>
-        </div>
-        <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--preco">R$ 237,90<small>/ano</small></span>
-        <a class="sis-comprar" href="https://pay.cakto.com.br/34auxis_977232" target="_blank" rel="noopener">Comprar</a>
         </div>
       </article>
       <article class="sis" data-cat="sorteio eventos" data-gratis="0">
@@ -474,16 +606,6 @@
           <h3 class="sis-nome">Paleta <span class="sis-versao">v1.0.0</span></h3>
           <p class="sis-plat">Windows</p>
           <p class="sis-desc">Gerador de paletas de cores: parte de uma cor base e monta combinações harmônicas (complementar, análoga, tríade), com os códigos prontos pra copiar em HEX, RGB e HSL.</p>
-        </div>
-        <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--dev">Em desenvolvimento</span>
-        </div>
-      </article>
-      <article class="sis" data-cat="estudos" data-gratis="0">
-        <img class="sis-icone" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234A1D96%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23A984E8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url(%23g)%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2243%22%20font-family%3D%22Manrope%2CSegoe%20UI%2Csans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22700%22%20fill%3D%22%23F7F5FB%22%20text-anchor%3D%22middle%22%3ER%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="52" height="52" loading="lazy">
-        <div class="sis-corpo">
-          <h3 class="sis-nome">Rumo Certo <span class="sis-versao">v1.0.0</span></h3>
-          <p class="sis-plat">Windows</p>
-          <p class="sis-desc">Plataforma de ensino a distância focada em preparação para concursos públicos, com videoaulas organizadas por disciplina, sistema de login seguro, controle de progresso por conta e conteúdo atualizado por especialistas.</p>
         </div>
         <div class="sis-pe"><span class="sis-etiqueta sis-etiqueta--dev">Em desenvolvimento</span>
         </div>
@@ -646,9 +768,9 @@
         <p class="pack-preco">R$ 347,90<span>/ano</span></p>
         <p class="pack-economia">Avulso sairia R$ 575,78 — você economiza R$ 227,88 (40%)</p>
         <ul class="pack-itens">
-            <li>Sorteio</li>
+            <li>Bingo</li>
             <li>Bora Sortear</li>
-            <li>GiraSorte</li>
+            <li>Roleta</li>
             <li>Sorteva</li>
         </ul>
         <a class="btn btn--fantasma" href="https://pay.cakto.com.br/5suckwr_1058004" target="_blank" rel="noopener">Levar o Pack Sorteio</a>
@@ -659,7 +781,7 @@
         <p class="pack-preco">R$ 357,90<span>/ano</span></p>
         <p class="pack-economia">Avulso sairia R$ 495,60 — você economiza R$ 137,70 (28%)</p>
         <ul class="pack-itens">
-            <li>Sorteio</li>
+            <li>Bingo</li>
             <li>Cartelaria</li>
             <li>CSV</li>
             <li>PixelArt</li>
@@ -674,8 +796,8 @@
         <p class="pack-economia">Avulso sairia R$ 933,28 — você economiza R$ 235,38 (25%)</p>
         <ul class="pack-itens">
             <li>Bora Sortear</li>
-            <li>Sorteio</li>
-            <li>GiraSorte</li>
+            <li>Bingo</li>
+            <li>Roleta</li>
             <li>Sorteva</li>
             <li>CSV</li>
             <li>Cartelaria</li>
@@ -686,7 +808,6 @@
             <li>Etiqueta <small>em desenvolvimento</small></li>
             <li>Paleta <small>em desenvolvimento</small></li>
             <li>MenteFlow <small>em desenvolvimento</small></li>
-            <li>Rumo Certo <small>em desenvolvimento</small></li>
         </ul>
         <a class="btn btn--principal" href="https://pay.cakto.com.br/o8joqde_1058010" target="_blank" rel="noopener">Levar o Pack ADM</a>
       </article>
@@ -709,7 +830,7 @@
           <td class="tab-acao"><a href="https://pay.cakto.com.br/fast4jx_977157" target="_blank" rel="noopener">Comprar</a></td>
         </tr>
         <tr>
-          <th scope="row">Sorteio</th>
+          <th scope="row">Bingo</th>
           <td class="tab-plat">Windows</td>
           <td class="tab-preco">R$ 237,90</td>
           <td class="tab-acao"><a href="https://pay.cakto.com.br/34auxis_977232" target="_blank" rel="noopener">Comprar</a></td>
@@ -721,7 +842,7 @@
           <td class="tab-acao"><a href="https://pay.cakto.com.br/759m6ng_979716" target="_blank" rel="noopener">Comprar</a></td>
         </tr>
         <tr>
-          <th scope="row">GiraSorte</th>
+          <th scope="row">Roleta</th>
           <td class="tab-plat">Windows</td>
           <td class="tab-preco">R$ 59,99</td>
           <td class="tab-acao"><a href="https://pay.cakto.com.br/yhb3de8_1058021" target="_blank" rel="noopener">Comprar</a></td>

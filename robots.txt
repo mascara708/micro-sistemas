@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mascara708.github.io/micro-sistemas/sitemap.xml

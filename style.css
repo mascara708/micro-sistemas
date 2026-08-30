@@ -168,7 +168,7 @@ p  { margin: 0; }
 .menu-botao[aria-expanded="true"] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
-.hero { position: relative; padding: clamp(48px, 8vw, 92px) 0 clamp(56px, 8vw, 100px); overflow: hidden; }
+.hero { position: relative; padding: clamp(40px, 6.4vw, 74px) 0 clamp(40px, 6vw, 72px); overflow: hidden; }
 .hero-brilho {
   position: absolute; inset: -30% -10% auto -10%; height: 780px;
   background:
@@ -176,6 +176,71 @@ p  { margin: 0; }
     radial-gradient(40% 40% at 82% 18%, rgba(169, 132, 232, .26), transparent 70%);
   pointer-events: none;
   filter: blur(6px);
+}
+
+/* Aurora. Duas manchas que passeiam por trás do texto, com períodos primos
+   entre si (23s e 31s) — nunca voltam à mesma posição ao mesmo tempo, então o
+   fundo não tem "loop" que o olho pegue. Só transform e opacity animam: as
+   duas rodam no compositor, sem repintar nada.
+
+   Sem blur próprio de propósito. O gradiente radial já nasce macio, e um
+   filter: blur() num elemento de 800px custa caro em máquina fraca — que é
+   exatamente o público que baixa este programa. */
+.hero-aurora {
+  position: absolute; inset: -30% -10% auto -10%; height: 860px;
+  pointer-events: none; overflow: hidden;
+}
+/* Sem will-change de propósito. Elemento que anima transform em CSS já é
+   promovido a camada sozinho quando precisa; o will-change forçaria as duas
+   camadas de ~900px a existir SEMPRE, inclusive com o hero fora da tela — e
+   quem baixa este programa costuma estar na máquina que menos tem memória
+   sobrando pra isso. */
+.hero-aurora::before,
+.hero-aurora::after {
+  content: ''; position: absolute; border-radius: 50%;
+}
+.hero-aurora::before {
+  width: 62vw; height: 62vw; max-width: 900px; max-height: 900px;
+  left: -8vw; top: -18vw;
+  background: radial-gradient(circle, rgba(107, 47, 209, .30), transparent 62%);
+  animation: aurora-a 23s ease-in-out infinite;
+}
+.hero-aurora::after {
+  width: 46vw; height: 46vw; max-width: 680px; max-height: 680px;
+  right: -6vw; top: -6vw;
+  background: radial-gradient(circle, rgba(169, 132, 232, .20), transparent 64%);
+  animation: aurora-b 31s ease-in-out infinite;
+}
+@keyframes aurora-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(9vw, 5vw, 0) scale(1.14); }
+  66%      { transform: translate3d(3vw, -3vw, 0) scale(.92); }
+}
+@keyframes aurora-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  40%      { transform: translate3d(-11vw, 6vw, 0) scale(1.2); }
+  70%      { transform: translate3d(-4vw, -2vw, 0) scale(.9); }
+}
+
+/* Lanterna do ponteiro. --mx/--my são atualizados pelo app.js num rAF só (ver
+   "Fundo que responde ao ponteiro" lá). Começa em 50%/38% pra quem chega de
+   telefone ou de teclado ver a luz num lugar sensato, e não no canto 0,0. */
+.hero-lanterna {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 38%),
+              rgba(169, 132, 232, .13), transparent 70%);
+  opacity: 0; transition: opacity .6s ease;
+}
+.hero:hover .hero-lanterna { opacity: 1; }
+
+/* Grão. Um azulejo de ruído por cima de tudo, quase invisível (3,5%), que tira
+   o aspecto de gradiente digital chapado das áreas escuras — é o que separa
+   "fundo preto" de "fundo com atmosfera". Fixo na viewport pra não rolar junto
+   e não virar textura de papel de parede. */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 9;
+  pointer-events: none; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .hero-grade {
   position: relative;
@@ -197,9 +262,16 @@ p  { margin: 0; }
 }
 
 h1 em {
-  font-style: normal;
+  /* Itálico de verdade no "num só lugar.". A Manrope não tem corte itálico
+     desenhado (o @font-face declara só font-style: normal), então quem inclina
+     é o navegador — oblíquo sintético. Em duas palavras de display isso passa
+     bem; num parágrafo inteiro não passaria. */
+  font-style: italic;
   background: linear-gradient(100deg, var(--roxo-claro) 10%, #D9C6FF 50%, var(--roxo-claro) 90%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  /* O oblíquo joga a perna do "g" pra direita e o background-clip corta rente
+     na caixa do texto. Um respiro à direita evita a letra decepada. */
+  padding-right: .08em;
 }
 
 .hero-sub {
@@ -219,10 +291,16 @@ h1 em {
   background: linear-gradient(160deg, rgba(74, 29, 150, .3), rgba(23, 18, 37, .9));
   box-shadow: var(--sombra), 0 0 0 1px rgba(255, 255, 255, .04) inset;
   overflow: hidden;
-  transform: perspective(1600px) rotateY(-6deg) rotateX(2deg);
+  transform: perspective(1600px) rotateY(var(--ry, -6deg)) rotateX(var(--rx, 2deg));
   transition: transform .6s cubic-bezier(.2, .8, .2, 1);
 }
+/* Sem JS (ou com menos movimento) a janela continua reagindo no hover, como
+   sempre reagiu. Com JS, o app.js põe .janela--vivo e passa a dirigir --ry/--rx
+   quadro a quadro: aí a transição do CSS tem que sair da frente, senão ela
+   briga com o amortecimento que já é feito lá e o movimento fica borrachudo. */
 .janela:hover { transform: perspective(1600px) rotateY(-2deg) rotateX(0deg); }
+.janela--vivo { transition: none; }
+.janela--vivo:hover { transform: perspective(1600px) rotateY(var(--ry, -6deg)) rotateX(var(--rx, 2deg)); }
 .janela-barra {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 16px;
@@ -277,10 +355,10 @@ h1 em {
 .numero span { display: block; margin-top: 4px; font-size: .87rem; color: var(--txt-fraco); }
 
 /* ── Seções ──────────────────────────────────────────────────────────────── */
-.secao { padding: clamp(64px, 9vw, 116px) 0; }
+.secao { padding: clamp(46px, 6.4vw, 82px) 0; }
 .secao--alt { background: var(--bg-alt); border-block: 1px solid rgba(169, 132, 232, .08); }
 
-.secao-topo { max-width: 700px; margin-bottom: clamp(38px, 5vw, 58px); }
+.secao-topo { max-width: 700px; margin-bottom: clamp(26px, 3.4vw, 40px); }
 .secao-etiqueta {
   font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
   color: var(--roxo-claro); margin-bottom: 12px;
@@ -289,9 +367,9 @@ h1 em {
 .secao-linha strong { color: var(--txt); }
 
 /* ── Cartões "o que é" ───────────────────────────────────────────────────── */
-.cartoes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.cartoes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .cartao {
-  padding: 26px 24px 28px;
+  padding: 20px 20px 22px;
   border: 1px solid var(--borda); border-radius: var(--raio);
   background: var(--card);
   transition: border-color .25s ease, transform .25s ease, background .25s ease;
@@ -324,19 +402,23 @@ h1 em {
 }
 
 /* ── Vitrine ─────────────────────────────────────────────────────────────── */
+/* 205px é medido, não chutado: a faixa tem 1180px menos 24 de padding de cada
+   lado = 1132 úteis. Com gap de 14, cinco colunas pedem 5w + 56 ≤ 1132, ou seja
+   w ≤ 215. Em 258px cabiam quatro, e os 18 sistemas prontos ocupavam 5 fileiras;
+   em cinco colunas são 4 fileiras — uma a menos, sem tirar cartão nenhum. */
 .vitrine {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 14px;
 }
 .sis {
   display: flex; flex-direction: column;
-  padding: 22px 22px 18px;
+  padding: 17px 18px 14px;
   border: 1px solid var(--borda); border-radius: var(--raio);
   background: var(--card);
   transition: border-color .22s ease, transform .22s ease, background .22s ease;
 }
 .sis:hover { border-color: var(--borda-viva); background: var(--card-alta); transform: translateY(-3px); }
 .sis[hidden] { display: none; }
-.sis-icone { width: 52px; height: 52px; border-radius: 13px; margin-bottom: 14px; }
+.sis-icone { width: 44px; height: 44px; border-radius: 11px; margin-bottom: 10px; }
 .sis-corpo { flex: 1; }
 .sis-nome { font-size: 1.08rem; margin-bottom: 2px; }
 .sis-versao { font-size: .72rem; font-weight: 600; color: var(--cinza-neutro); letter-spacing: 0; }
@@ -347,7 +429,7 @@ h1 em {
 }
 .sis-pe {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-top: 18px; padding-top: 15px;
+  margin-top: 13px; padding-top: 11px;
   border-top: 1px solid rgba(169, 132, 232, .12);
 }
 .sis-etiqueta { font-size: .95rem; font-weight: 800; letter-spacing: -.01em; }
@@ -384,7 +466,7 @@ h1 em {
 .dest {
   display: grid; grid-template-columns: .88fr 1.12fr; gap: clamp(28px, 5vw, 62px);
   align-items: center;
-  padding-block: clamp(30px, 5vw, 52px);
+  padding-block: clamp(22px, 3.4vw, 38px);
 }
 .dest + .dest { border-top: 1px solid rgba(169, 132, 232, .1); }
 .dest--invertido .dest-txt { order: 2; }
@@ -414,7 +496,7 @@ h1 em {
 }
 
 /* ── Passos ──────────────────────────────────────────────────────────────── */
-.passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: p; }
+.passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: p; }
 .passo {
   position: relative; padding: 30px 26px 28px;
   border: 1px solid var(--borda); border-radius: var(--raio);
@@ -444,7 +526,7 @@ h1 em {
    na MESMA linha nos quatro, então os preços e os botões alinham sem ninguém
    ter que chutar uma altura mínima. Onde não houver subgrid, cada card
    simplesmente usa as próprias linhas: desalinha um pouco e continua legível. */
-.packs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.packs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .pack {
   position: relative;
   display: flex; flex-direction: column;
@@ -494,7 +576,7 @@ h1 em {
 .pack .btn { width: 100%; }
 
 /* ── Tabela de avulsos ───────────────────────────────────────────────────── */
-.tab-titulo { margin: clamp(44px, 6vw, 68px) 0 20px; font-size: 1.3rem; }
+.tab-titulo { margin: clamp(32px, 4vw, 46px) 0 16px; font-size: 1.3rem; }
 .tab-rolagem { overflow-x: auto; border: 1px solid var(--borda); border-radius: var(--raio); }
 .tab { width: 100%; border-collapse: collapse; min-width: 520px; }
 .tab thead th {
@@ -523,7 +605,7 @@ h1 em {
 
 /* ── Celular ─────────────────────────────────────────────────────────────── */
 .cel-grade { display: grid; grid-template-columns: 1.35fr .65fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
-.cel-lista { list-style: none; padding: 0; margin: 28px 0; display: grid; gap: 8px; }
+.cel-lista { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 6px; }
 .cel-lista li {
   display: flex; align-items: center; gap: 13px;
   padding: 11px 16px; border-radius: 12px;
@@ -545,7 +627,7 @@ h1 em {
 .cel-qr p { margin-top: 14px; font-size: .85rem; color: var(--cinza-neutro); }
 
 /* ── FAQ ─────────────────────────────────────────────────────────────────── */
-.faq { display: grid; gap: 10px; }
+.faq { display: grid; gap: 8px; }
 .faq details {
   border: 1px solid var(--borda); border-radius: var(--raio);
   background: var(--card);
@@ -569,10 +651,10 @@ h1 em {
 .faq strong { color: var(--txt); }
 
 /* ── Chamada final ───────────────────────────────────────────────────────── */
-.final { padding: clamp(56px, 8vw, 96px) 0; }
+.final { padding: clamp(42px, 6vw, 70px) 0; }
 .final-caixa {
   text-align: center;
-  padding: clamp(44px, 7vw, 76px) clamp(24px, 5vw, 60px);
+  padding: clamp(34px, 5vw, 56px) clamp(24px, 5vw, 60px);
   border-radius: var(--raio-g);
   border: 1px solid var(--borda-viva);
   background:
@@ -657,6 +739,16 @@ h1 em {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   .e-surge { opacity: 1; transform: none; }
   .janela { transform: none; }
+
+  /* A regra de cima resolve animação que ACABA, mas a aurora é infinite: com
+     duração .001ms ela não para — completa um ciclo inteiro por quadro, e o
+     que era um passeio lento de 23s pode virar tremelique, que é exatamente o
+     oposto do pedido. Aqui tem que ser animation: none mesmo.
+     O logo3d.js nem chega a carregar neste modo (ele checa a mesma media
+     query), então a marca fica na imagem de reserva, parada. */
+  .hero-aurora::before,
+  .hero-aurora::after { animation: none !important; }
+  .hero-lanterna { display: none; }
 }
 
 
@@ -671,17 +763,35 @@ h1 em {
    falha no meio do caminho deixa a marca parada em vez de um buraco. */
 .logo3d {
   position: relative;
-  width: clamp(120px, 15vw, 180px);
+  /* Cresceu de 120–180px em 29/08/2026. Com a peça pequena, o giro, a mola do
+     ponteiro e a luz varrendo os biséis simplesmente não se viam — era um
+     enfeite de 15vw no canto. O trabalho de animação só se paga se houver
+     superfície pra ele acontecer. */
+  width: clamp(132px, 16.5vw, 212px);
   aspect-ratio: 1;
   margin-bottom: 18px;
 }
 .logo3d canvas { display: block; width: 100%; height: 100%; }
 
+/* Escondida por padrão, e não mais visível-até-o-3D-chegar. A lógica virou do
+   avesso em 29/08/2026 justamente pra acabar com o piscar: antes ela aparecia
+   em toda visita durante o tempo de baixar os 670 KB do three.js.
+
+   Sem border-radius agora: a imagem é a silhueta da marca em alfa, não mais um
+   ícone quadrado — arredondar cortaria as pontas do "M". E height:auto porque
+   ela não é quadrada (240×226). */
 .logo3d-reserva {
   position: absolute; inset: 0; margin: auto;
-  width: 62%; height: 62%;
-  border-radius: 24%;
-  opacity: 1;
+  width: 74%; height: auto;
+  opacity: 0;
   transition: opacity .5s ease;
+  pointer-events: none;
 }
-.logo3d--pronto .logo3d-reserva { opacity: 0; pointer-events: none; }
+/* O logo3d.js marca isto quando desiste: sem WebGL, com "reduzir animações"
+   ligado, ou se a cena falhar no meio. Aí a marca parada é o que se vê.
+   O app.js marca também, por tempo, se depois de um tempo nada apareceu. */
+.logo3d--sem3d .logo3d-reserva { opacity: 1; }
+/* Depois de --sem3d de propósito: se a rede estava lenta e a reserva já tinha
+   entrado, a chegada do 3D tem que apagá-la — e com especificidade igual,
+   quem vem por último ganha. */
+.logo3d--pronto .logo3d-reserva { opacity: 0; }
