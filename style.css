@@ -437,6 +437,10 @@ h1 em {
 .sis-etiqueta--preco { color: var(--txt); }
 .sis-etiqueta--gratis { color: var(--verde); }
 .sis-etiqueta--dev { font-size: .78rem; font-weight: 700; color: var(--cinza-neutro); text-transform: uppercase; letter-spacing: .06em; }
+/* Pronto e pago, mas sem venda avulsa — só chega junto de um pack. Cor da
+   marca (e não a cinza do "em desenvolvimento"): é uma coisa que existe e
+   funciona, não uma promessa. */
+.sis-etiqueta--pack { font-size: .78rem; font-weight: 700; color: var(--acento); text-transform: uppercase; letter-spacing: .06em; }
 .sis-comprar {
   text-decoration: none; font-size: .87rem; font-weight: 700;
   padding: 8px 15px; border-radius: 9px;
